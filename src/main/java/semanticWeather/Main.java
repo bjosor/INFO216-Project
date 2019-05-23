@@ -16,7 +16,7 @@ public class Main extends Application {
         FXMLLoader fxmlLoader = new FXMLLoader();
         Controller controller = fxmlLoader.getController();
 
-        primaryStage.setTitle("Amazing WeatherData Browser");
+        primaryStage.setTitle("WeatherData Browser");
         primaryStage.setScene(new Scene(root, 980, 720));
         primaryStage.show();
 
