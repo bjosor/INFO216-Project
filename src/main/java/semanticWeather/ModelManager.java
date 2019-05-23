@@ -1,5 +1,6 @@
 package semanticWeather;
 
+import com.github.jsonldjava.utils.Obj;
 import com.mashape.unirest.http.HttpResponse;
 import com.mashape.unirest.http.JsonNode;
 import com.mashape.unirest.http.Unirest;
@@ -165,19 +166,22 @@ public class ModelManager {
     }
 
 
-    public ArrayList<Record> query(String sensorID, String name, String element, LocalDate fromDate, LocalDate toDate) {
-
-        element = element.replace("(", "\\\\(");
-        element = element.replace(")", "\\\\)");
+    public ArrayList<Record> query(String sensorID, String name, Object element, LocalDate fromDate, LocalDate toDate) {
+        String fromDateStr = "";
+        String toDateStr = "";
+        String elementStr = "";
 
         if(fromDate != null && toDate != null){
-            String fromDateStr = fromDate.toString() + "T00:00:00Z";
-            String toDateStr = toDate.toString() + "T00:00:00Z";
-        } else {
-            String fromDateStr = "";
-            String toDateStr = "";
-
+            fromDateStr = fromDate.toString() + "T00:00:00Z";
+            toDateStr = toDate.toString() + "T00:00:00Z";
         }
+
+        if (element != null){
+            elementStr = element.toString();
+        }
+
+        elementStr = elementStr.replace("(", "\\\\(");
+        elementStr = elementStr.replace(")", "\\\\)");
 
         String strQuery = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
                 "PREFIX frost: <https://frost.met.no/schema#>" +
@@ -195,11 +199,11 @@ public class ModelManager {
                 "?obsGroup xsd:dateTime ?date . ";
 
         if(fromDate != null && toDate != null){
-            strQuery += "FILTER (?date >= \"" + fromDate + "T00:00:00Z" + "\"^^xsd:dateTime && ?date <= \"" + toDate + "T00:00:00Z" + "\"^^xsd:dateTime)  . \n";
+            strQuery += "FILTER (?date >= \"" + fromDateStr + "\"^^xsd:dateTime && ?date <= \"" + toDateStr + "\"^^xsd:dateTime)  . \n";
         }
 
         strQuery += "?obsGroup frost:Observation ?o . " +
-                "?o frost:elementId ?element . FILTER (regex(?element, \"" + element + "\", 'i'))" +
+                "?o frost:elementId ?element . FILTER (regex(?element, \"" + elementStr + "\", 'i'))" +
                 "?o frost:value ?val . " +
                 "}" +
                 "ORDER BY(?date)" +
@@ -232,10 +236,10 @@ public class ModelManager {
     }
 
     private ResultSet execute(String strQuery){
-        //System.out.println(strQuery);
         Query newQuery = QueryFactory.create(strQuery);
         String finalQuery = newQuery.serialize();
 
+        System.out.println(finalQuery);
 
         QueryExecution qexec = QueryExecutionFactory.create(finalQuery, model);
         ResultSet results = qexec.execSelect();
@@ -261,7 +265,6 @@ public class ModelManager {
         String obsResponse = getWeatherJson(auth, url).getBody().toString();
         obsResponse = obsResponse.replace("\"@context\":\"https://frost.met.no/schema\",", "\"@context\":" + jsonContext + ",");
 
-        System.out.println("Cake!");
         addJsonToModel(obsResponse, model);
     }
 

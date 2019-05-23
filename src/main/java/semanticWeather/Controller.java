@@ -68,7 +68,12 @@ public class Controller {
         table.getColumns().add(column6);
         table.getColumns().add(column7);
 
-        element.getItems().addAll("air_temperature", "best_estimate_mean(air_temperature P1D)", "sum(precipitation_amount P1D)");
+        element.getItems().addAll("air_temperature",
+                "best_estimate_mean(air_temperature P1D)",
+                "best_estimate_mean(air_temperature P1M)",
+                "sum(precipitation_amount P1D)",
+                "sum(precipitation_amount P1M)",
+                "sum(duration_of_sunshine P1M)");
     }
 
 
@@ -139,7 +144,7 @@ public class Controller {
         ArrayList<Record> data;
         if(observationCheck.isSelected()){
             System.out.println("1");
-            data = modelManager.query(sensorId.getText(), place.getText(), element.getValue().toString(), fromDate.getValue(), toDate.getValue());
+            data = modelManager.query(sensorId.getText(), place.getText(), element.getValue(), fromDate.getValue(), toDate.getValue());
         } else {
             System.out.println("2");
             data = modelManager.query(sensorId.getText(), place.getText());

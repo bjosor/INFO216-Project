@@ -16,4 +16,10 @@ We only have some data stored locally as the api database is to big to effective
 In case of the frost api being unavailable or otherwise not working, we have stored some data locally already. It will also be easier to use these as it is a bit impractical to figure out which stations offer which data. We noticed this a bit late and could not implement a ui for this in time. Here are some examples of locally available data:
 
 SN4110 Lørenskog
-Has sum(precipitation_amount P1D) data available between 01.01.2016 up to today.
+Has sum(precipitation_amount P1D) data available between 01.01.2016(day.month.year) up to today.
+
+SN18700 Blindern
+Has sum(duration_of_sunshine P1M) available between 01.01.2010 up to today.
+
+SN50540 Florida
+has best_estimate_mean(air_temperature P1D) available between 01.01.2010 up to 01.05.2010
