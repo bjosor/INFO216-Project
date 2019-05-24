@@ -21,6 +21,7 @@ import java.util.ArrayList;
 
 public class ModelManager {
 
+    //custom @context for interpreting JSON-LD from the frost api.
     static String jsonContext = "{\"schema\": \"http://schema.org/\"," +
             "\"xsd\": \"http://www.w3.org/2001/XMLSchema#\"," +
             "\"frost\": \"https://frost.met.no/schema#\"," +
@@ -47,6 +48,10 @@ public class ModelManager {
     private static ModelManager instance;
     private static Model model;
 
+    /**
+     * read the model from file. If none exists
+     * create a new one with a request for SensorStations
+     */
     private ModelManager(){
         model = ModelFactory.createDefaultModel();
 
@@ -58,6 +63,10 @@ public class ModelManager {
         }
     }
 
+    /**
+     * singleton constructor
+     * @return
+     */
     public static ModelManager getInstance(){
         if (instance == null){
             instance = new ModelManager();
@@ -85,6 +94,12 @@ public class ModelManager {
         return response;
     }
 
+    /**
+     * Parses the jsonString into a suitable format
+     * for reading into the model
+     * @param jsonString
+     * @param model
+     */
     public void addJsonToModel(String jsonString, Model model) {
         JSONParser parser = new JSONParser();
         try {
@@ -129,7 +144,12 @@ public class ModelManager {
         }
     }
 
-
+    /**
+     * sparql query to the model for sensorstations.
+     * @param sensorID Id or part of an id to match for
+     * @param name matches for values in the name county and municipality properties
+     * @return the query result as an ArrayList of Records
+     */
     public ArrayList<Record> query(String sensorID, String name) {
 
         String strQuery = "PREFIX xsd: <http://www.w3.org/2001/XMLSchema#> \n" +
@@ -165,7 +185,15 @@ public class ModelManager {
 
     }
 
-
+    /**
+     * sparql query to the model for Observations
+     * @param sensorID Id or part of an id to match for
+     * @param name matches for values in the name county and municipality properties
+     * @param element matches for the given element
+     * @param fromDate matches instances between this date and the fromDate
+     * @param toDate matches instances between this date and the toDate
+     * @return the query results as an ArrayList of Records
+     */
     public ArrayList<Record> query(String sensorID, String name, Object element, LocalDate fromDate, LocalDate toDate) {
         String fromDateStr = "";
         String toDateStr = "";
@@ -230,11 +258,21 @@ public class ModelManager {
         return records;
     }
 
+    /**
+     * formats a temperature value into a more readable format
+     * @param temp
+     * @return
+     */
     public String formatTemp(String temp){
         String result = temp.split("\\^")[0];
         return result;
     }
 
+    /**
+     * executes the given sparql query
+     * @param strQuery query to execute
+     * @return results as a ResultSet
+     */
     private ResultSet execute(String strQuery){
         Query newQuery = QueryFactory.create(strQuery);
         String finalQuery = newQuery.serialize();
@@ -247,6 +285,11 @@ public class ModelManager {
         return results;
     }
 
+    /**
+     * takes a given array of parameters and formats these into an api request
+     * @param params array of string parameters
+     * @return formatted url
+     */
     private String formatApiRequest(String[] params){
         String request = "https://frost.met.no/observations/v0.jsonld?";
 
@@ -259,6 +302,10 @@ public class ModelManager {
         return request;
     }
 
+    /**
+     * executes steps necessary to get observations from the api into the model.
+     * @param strings parameters to request information for
+     */
     public void apiGetObservations(String[] strings) {
         String url = formatApiRequest(strings);
 
@@ -268,6 +315,9 @@ public class ModelManager {
         addJsonToModel(obsResponse, model);
     }
 
+    /**
+     * executes steps necessary to get the list of sensorstations in norway into the model
+     */
     public void apiGetSources() {
         String url = "https://frost.met.no/sources/v0.jsonld?country=Norge";
 

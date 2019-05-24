@@ -76,33 +76,9 @@ public class Controller {
                 "sum(duration_of_sunshine P1M)");
     }
 
-
-    @FXML
-    public void getChartData(){
-
-        ArrayList<Pair<String,Float>> data = new ArrayList<>(); //= modelManager.query(placePicker.getText(), fromDate.getValue().toString(), toDate.getValue().toString());
-
-
-        XYChart.Series<String, Number> series1 = new XYChart.Series<>();
-        series1.setName("Series 1");
-        ArrayList<String> labels = new ArrayList<>();
-
-
-        for(Pair<String, Float> entry : data) {
-            String key = entry.getKey();
-            Float value = entry.getValue();
-
-            labels.add(key);
-
-            series1.getData().add(new XYChart.Data<>(key, value));
-        }
-        //xAxis.setCategories(FXCollections.observableArrayList(labels));
-
-        //chart1.getData().add(series1);
-    }
-
     /**
-     * Populates the tableView based on selected search criteria
+     * Populates the tableView based on selected search criteria.
+     * will attempt to get data from api if there are no matches in the model.
      */
     @FXML
     public void getTableData(){
@@ -140,6 +116,10 @@ public class Controller {
         }
     }
 
+    /**
+     * get data from the model based on selected parameters
+     * @return ArrayList of Records
+     */
     public ArrayList<Record> queryModel(){
         ArrayList<Record> data;
         if(observationCheck.isSelected()){

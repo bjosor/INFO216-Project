@@ -22,4 +22,13 @@ SN18700 Blindern
 Has sum(duration_of_sunshine P1M) available between 01.01.2010 up to today.
 
 SN50540 Florida
+Has sum(precipitation_amount P1D) data available between 01.05.2015 up to today
 has best_estimate_mean(air_temperature P1D) available between 01.01.2010 up to 01.05.2010
+
+SN68010 Trondheim-Høvringen
+Has sum(precipitation_amount P1D) data available between 01.05.2018 up to today
+
+you can try to request other data as well but there is no guarantee the given sensor has it available. If you have provided all required parameters (full sensorid, element, fromdate and todate)
+and still get no results, this is the most likely reason.
+
+you can go to https://frost.met.no/reference#!/observations/timeSeries and search for a sensorid and an element and it will tell you wether there is data available and if so when it is valid from and to.
